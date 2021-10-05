@@ -1,7 +1,6 @@
 asyncio
 discord
 discord.py
-python
 pypresence
 ranking
 keep-alive
