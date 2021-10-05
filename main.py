@@ -1,4 +1,23 @@
-import asyncio, discord, time 
+import discord
+import asyncio
+import datetime
+import os
+import random
+import json
+import requests
+import time
+import keep_alive
+import pytz
+import openpyxl
+import ranking as ranking
+from ydl import *
+from game import *
+from discord import user
+from pypresence import Presence
+from discord.ext import commands
+from discord.ext.commands import Bot
+from discord.ext.commands import has_permissions
+from discord.utils import get
 from ydl import *
 from game import *
 from user import *
