@@ -1,45 +1,12 @@
-import discord
-import asyncio
-import datetime
-import os
-import random
-import json
-import requests
-import time
-import keep_alive
-import pytz
-import openpyxl
-import ranking as ranking
+import asyncio, discord, time 
 from ydl import *
 from game import *
-from discord import user
-from pypresence import Presence
+from user import *
 from discord.ext import commands
-from discord.ext.commands import Bot
-from discord.ext.commands import has_permissions
-from discord.utils import get
 
 bot = commands.Bot(command_prefix="!")
-client = discord.Client()
 
-cid = 869516899229253693
-tid = 869516899229253693
-gid = 795723865094881290
-dii = 828017942565617674
-aid = 571699200664797185
-gtid = 869577097994194995
-
-@client.event
-async def on_member_join(member):
-  role = discord.utils.get(message.guild.roles, name = '[일반 유저]')
-  await user.add_roles(role)
-
-@client.event
-async def on_member_join(member):
-  role = discord.utils.get(message.guild.roles, name = '유저')
-  await user.add_roles(role)
-
-@client.event
+@bot.event
 async def on_ready():
   print(client.user.name)
   print('성공적으로 봇이 시작되었습니다.')
@@ -47,284 +14,6 @@ async def on_ready():
   print('현재 온라인 멤버 수 : {online}명')
   game = discord.Game('코드 봇ㅣ!도움말ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ')
   await client.change_presence(status=discord.Status.online, activity=game)
-
-
-
-@client.event
-async def on_message(message):
-    y = datetime.datetime.now().year
-    m = datetime.datetime.now().month
-    d = datetime.datetime.now().day
-    h = datetime.datetime.now().hour
-    min = datetime.datetime.now().minute
-    f = open("메세지저장.txt", "a")
-    f.write(f"서버이름: {message.guild.name}\n전송자: ID {message.author.id} / 닉네임: {message.author}\n시간: {y}년 {m}월 {d}일 {h}시 {min}분\n메세지 내용: {message.content}\n\n\n")
-    f.close()
-
-
-
-@client.event
-async def on_message(message, checkUser=None, levelupCheck=None, modifyExp=None):
-  if message.author == client.user:
-    return
-  if message.content == "!reset":
-    await client.process_commands(message)
-    return
-  else:
-    userExistance = checkUser(message.author.name)
-    userRow = checkUser(message.author.id)
-    channel = message.channel
-    if userExistance:
-      levelUp, lvl = levelupCheck(userRow)
-      if levelUp:
-        print(message.author, "가 레벨업 했습니다")
-        print("")
-        embed = discord.Embed(title="레벨업", description=None, color=0x00A260)
-        embed.set_footer(text=message.author.name + "이 " + str(lvl) + "레벨 달성!")
-        await message.channel.send(embed=embed)
-      else:
-        modifyExp(userRow, 1)
-        print("------------------------------\n")
-
-        await client.process_commands(message)
-
-
-@client.event
-async def on_message(message, checkUser=None, DeleteAccount=None, Signup=None, checkUserNum=None, userInfo=None,getRank=None, chekcUserNum=None, getMoney=None, remit=None, modifyMoney=None, addLoss=None,cur_money=None):
-  if message.guild is None:
-    if message.author.bot:
-      return
-    else:
-      embed = discord.Embed(colour=discord.Colour.blue(), timestamp=message.created_at)
-      embed.add_field(name='전송자', value=message.author, inline=False)
-      embed.add_field(name='내용', value=message.content, inline=False)
-      embed.set_footer(text=f'!디엠 <@{message.author.id}> [할말] 을 통해 답장을 보내주세요!')
-      await client.get_channel(874419000401096754).send(f"`{message.author.name}({message.author.id})`", embed=embed)
-
-
-  if message.content.startswith('!디엠'):
-    if message.author.guild_permissions.manage_messages:
-      msg = message.content[26:]
-      await message.mentions[0].send(f"**개발자** 님의 답장: {msg}")
-      await message.channel.send(f'`{message.mentions[0]}`에게 DM을 보냈습니다')
-    else:
-      return
-
-  if message.content == "임베드":
-      embed = discord.Embed(title="임", description="베", color=0x00ff00)
-      embed.set_footer(text="드")
-      await message.channel.send(embed=embed)
-
-  if message.content == "!테스트":
-      embed = discord.Embed(title="테스트",description="[테스트](https://support.discord.com/hc/ko)", color=0x00ff00)
-      embed.set_thumbnail(url="http://theviewers.co.kr/Files/30/Images/201907/38704_35293_1517.jpg")
-
-      await message.channel.send(embed=embed)
-
-  if message.content.startswith("!보상"):
-      embed = discord.Embed(title="*{오늘의 보상}*", description=" 보상 : 세븐일레븐 무료 입장권!", color=0x00ff00)
-      embed.set_footer(text="보상은 주기적으로 바뀝니다.")
-      await message.channel.send(embed=embed)
-
-  if "시발" in message.content or "시부랄" in message.content or "병신" in message.content or "개새끼" in message.content or "시불" in message.content or "수발" in message.content or "새끼" in message.content or "tlqkf" in message.content or "qudtls" in message.content or "roTOrl" in message.content or "시,발" in message.content or "미친년" in message.content or "븅신" in message.content or "등신" in message.content or "니 애미" in message.content or "미국 갔어" in message.content or "tlqk" in message.content or "시1발" in message.content or "시qkf" in message.content or "시이발" in message.content or "tl1qkf" in message.content or "싯1팔" in message.content or "시바" in message.content:
-    embed = discord.Embed(title="욕설이 감지되었습니다", description=f"{message.author.mention}님 메세지가 삭제되었습니다. *[사유 : 부적절한 언어 사용]*", color=0xf5d400)
-    await message.channel.send(embed=embed)
-    await message.delete()
-    return
-
-  if message.content.startswith("!리소스팩"):
-    embed = discord.Embed(title="겉날개 스킨 리소스팩", description="[겉날개 스킨](https://www.weebly.com/editor/uploads/1/0/5/1/105176727/custom_themes/365187814667513194/files/MoreElytrasbyJohnPaulInsoV1.5.zip)", color=0x00ff00)
-    embed.set_thumbnail(url="https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f7/Mojang_employees_2015_Elytra.png/revision/latest/scale-to-width-down/250?cb=20191029123353")
-
-  if message.content.startswith("!투표"):
-    if message.author.guild_permissions.administrator:
-      vote = message.content[4:].split("/")
-      await message.channel.send(" < " + vote[0] + " > ")
-      for i in range(1, len(vote)):
-        choose = await message.channel.send("```" + vote[i] + "```")
-        await choose.add_reaction('👍')
-      await message.delete()
-      return
-    
-    else:
-      await message.delete()
-      await message.channel.send("{}, 당신은 명령어를 사용할 수 있는 권한이 없습니다".format(message.author.mention))
-
-  if message.content.startswith("!청소"):
-    if message.author.guild_permissions.administrator:
-      amount = message.content[4:]
-      await message.delete()
-      await message.channel.purge(limit=int(amount))
-
-      embed = discord.Embed(title="메시지 삭제 알림", description="최근 디스코드 채팅 {}개가\n관리자 {}님의 요청으로 인해정상 삭제 조치 되었습니다".format(amount, message.author), color=0x000000)
-      embed.set_footer(text="Bot Made by. 『킬쟁이』#3333",icon_url="https://discordapp.com/channels/691615852620939274/703908401381376000/711859989177958410")
-      await message.channel.send(embed=embed)
-        
-    else:
-      await message.delete()
-      await message.channel.send("{}, 당신은 명령어를 사용할 수 있는 권한이 없습니다".format(message.author.mention))
-
-  if message.content.startswith("!마크"):
-    embed = discord.Embed(title="ㅤ", description="마크 무료로 설치하는법 어떤사람이 나 3만원 주고 마크 설치함 라고 하길래 알려줬다 1. 마크 사이트를 들어간다 2. 다운로드를 누른다 3. 런처 다운받는다 4. 설치한다 5. 로그인을 한다 6. 재밌게플레이를 한다 3만원에 설치한 사람은 호구다", color=0x000000)
-    await message.channel.send(embed=embed)
-
-  if message.content.startswith("!마크"):
-    await message.channel.send("@everyone ")
-
-  if message.content.startswith ("!인증 "):
-    if message.author.guild_permissions.administrator:
-      await message.delete()
-      user = message.mentions[0]
-
-      embed = discord.Embed(title="인증 시스템", description="인증이 정상적으로 완료 되었습니다 !",timestamp=datetime.datetime.now(pytz.timezone('UTC')), color=0xff0000)
-      embed.add_field(name="인증 대상자", value=f"{user.name} ( {user.mention} )", inline=False)
-      embed.add_field(name="담당 관리자", value=f"{message.author} ( {message.author.mention} )", inline=False)
-      embed.set_footer(text="Bot Made by. 『킬쟁이』#3333")
-      await message.channel.send(embed=embed)
-      role = discord.utils.get(message.guild.roles, name = '────[일반 유저]────')
-      await user.add_roles(role)
-
-    else:
-      await message.delete()
-      await message.channel.send(embed=discord.Embed(title="권한 부족", description = message.author.mention + "님은 권한이 없습니다", color = 0xff0000))
-
-  if message.content == "!테스트2": # 메세지 감지
-    await message.channel.send ("{} | {}, Hello".format(message.author, message.author.mention))
-    await message.author.send ("{} | {}, User, Hello".format(message.author, message.author.mention))
-
-  if message.content.startswith ("!공지"):
-    await message.delete()
-    if message.author.guild_permissions.administrator:
-      notice = message.content[4:]
-      channel = client.get_channel(795723865094881290)
-      embed = discord.Embed(title="**공지사항 제목 (볼드)*", description="\n――――――――――――――――――――――――――――\n\n{}\n\n――――――――――――――――――――――――――――".format(notice),timestamp=datetime.datetime.now(pytz.timezone('UTC')), color=0x00ff00)
-      embed.set_footer(text="Bot Made by. 『킬쟁이』#3333 | 담당 관리자 : {}".format(message.author), icon_url="https://cdn.codingworldnews.com/news/photo/202106/4358_6139_4837.jpg")
-      embed.set_thumbnail(url="https://cdn.codingworldnews.com/news/photo/202106/4358_6139_4837.jpg")
-      await channel.send ("@everyone", embed=embed)
-      await message.author.send("**[ BOT 자동 알림 ]** | 정상적으로 공지가 채널에 작성이 완료되었습니다 : )\n\n[ 기본 작성 설정 채널 ] : {}\n[ 공지 발신자 ] : {}\n\n[ 내용 ]\n{}".format(channel, message.author, notice))
- 
-    else:
-      await message.channel.send("{}, 당신은 관리자가 아닙니다".format(message.author.mention))
-
-  if message.content == "!특정입력":
-    ch = client.get_channel(836974954243162162)
-    await ch.send ("{} | {}, 현재 봇은 점검중입니다".format(message.author, message.author.mention))
-
-
-  if message.content.startswith("!시간"):
-    a = datetime.datetime.today().year
-    b = datetime.datetime.today().month
-    c = datetime.datetime.today().day
-    d = datetime.datetime.today().hour
-    e = datetime.datetime.today().minute
-    await message.channel.send(str(a) + "년 " + str(b) + "월 " + str(c) + "일 " + str(d) + "시 (3시간 차이남) " + str(e) + "분 입니다")   
-
-  if message.content.startswith("!출근"):
-    embed = discord.Embed(title=f"{message.author.name}님이 출근하셨습니다.", color=0x00ff00)
-    await client.get_channel(int(cid)).send (embed=embed)
-
-  if message.content.startswith("!퇴근"):
-    embed = discord.Embed(title=f"{message.author.name}님이 퇴근하셨습니다.", color=0x00ff00)
-    await client.get_channel(int(tid)).send (embed=embed)
-
-
-
-  if message.content.startswith("!주사위"):
-    result, _color, bot1, bot2, user1, user2, a, b = dice()
-
-    embed = discord.Embed(title="주사위 게임 결과", description=None, color=_color)
-    embed.add_field(name="Code Bot의 숫자 " + bot1 + "+" + bot2, value=":game_die: " + a, inline=False)
-    embed.add_field(name=message.author.name + "의 숫자 " + user1 + "+" + user2, value=":game_die: " + b, inline=False)
-    embed.set_footer(text="결과: " + result)
-
-    await message.channel.send(embed=embed)
-
-  if message.content.startswith("!내정보"):
-    userExistance, userRow = checkUser(message.author.name, message.author.id)
-    level, exp, money, loss = userInfo(userRow)
-    rank = getRank(userRow)
-    data = datetime.datetime.utcfromtimestamp(((int(message.author.id) >> 22) + 1420070400000) / 1000)
-    userNum = checkUserNum()
-    expToUP = level * level + 6 * level
-    boxes = int(exp / expToUP * 20)
-    print("------------------------------\n")
-    embed = discord.Embed(title="!유저 정보", description=message.author.name, color=0x62D0F6)
-    embed = discord.Embed(color=0x00ff00)
-    embed.add_field(name="이름", value=message.author.name, inline=True)
-    embed.add_field(name="서버닉네임", value=message.author.display_name, inline=True)
-    embed.add_field(name="가입일", value=str(data.year) + "년" + str(data.month) + "월" + str(data.day) + "일", inline=True)
-    embed.set_thumbnail(url=message.author.avatar_url)
-    embed.add_field(name="레벨", value=level)
-    embed.add_field(name="순위", value=str(rank) + "/" + str(userNum))
-    embed.add_field(name="XP: " + str(exp) + "/" + str(expToUP),value=boxes * ":blue_square:" + (20 - boxes) * ":white_large_square:", inline=False)
-    embed.add_field(name="보유 자산", value=money, inline=False)
-
-    await message.channel.send(embed=embed)
-
-  if message.content.startswith("!정보"):
-    userExistance, userRow = checkUser(message.author.name, message.author.id)
-    level, exp, money, loss = userInfo(userRow)
-    rank = getRank(userRow)
-    userNum = chekcUserNum()
-    print("------------------------------\n")
-    embed = discord.Embed(title="유저 정보", description=user.name, color=0x62D0F6)
-    embed.add_field(name="레벨", value=level)
-    embed.add_field(name="경험치", value=str(exp) + "/" + str(level * level + 6 * level))
-    embed.add_field(name="순위", value=str(rank) + "/" + str(userNum))
-    embed.add_field(name="보유 자산", value=money, inline=False)
-
-    await message.channel.send(embed=embed)
-
-  if message.content.startswith("!도움말"):
-    embed = discord.Embed(title="Code Bot", description="개발중", color=0x6E17E3)
-    embed.add_field(name="─────────기능─────────", value="ㅤ", inline=False)
-    embed.add_field(name=bot.command_prefix + "도움말", value="도움말을 봅니다", inline=False)
-    embed.add_field(name="욕설 필터링", value="감지해서 메세지를 삭제하고 경고 메세지를 보냅니다", inline=False)
-    embed.add_field(name="─────────놀이─────────", value="ㅤ", inline=False)
-    embed.add_field(name=bot.command_prefix + "주사위", value="주사위를 굴려 봇과 대결합니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "보상", value="오늘의 보상입니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "도박 [돈]", value="(오류)도박 게임입니다", inline=False)
-    embed.add_field(name="─────────정보─────────", value="ㅤ", inline=False)
-    embed.add_field(name="오류 생겨서 고치는중", value="ㅤ", inline=False)
-    embed.add_field(name=bot.command_prefix + "내정보", value="자신의 정보를 확인합니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "정보 [대상]", value="멘션한 [대상]의 정보를 확인합니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "송금 [대상] [돈]", value="멘션한 [대상]에게 [돈]을 보냅니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "랭킹", value="랭킹을 봅니다", inline=False)
-    embed.add_field(name="─────────관리자 권한─────────", value="ㅤ", inline=False)
-    embed.add_field(name=bot.command_prefix + "비밀", value="비밀입니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "청소 <int>", value="청소를 합니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "투표 <제목>/<내용>", value="공지를 합니다", inline=False)
-    embed.add_field(name="─────────테스트─────────", value="ㅤ", inline=False)
-    embed.add_field(name=bot.command_prefix + "테스트", value="테스트입니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "리소스팩", value="마인크래프트 리소스팩을 보여줍니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "임베드", value="임베드를 보여줍니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "시간", value="시간을 봅니다", inline=False)
-    embed.add_field(name=bot.command_prefix + "마크", value="마크 무료로 설치하는법을 보여줍니다", inline=False)
-    await message.channel.send(embed=embed)
-    
-  if message.content.startswith('!블랙리스트'):
-    if message.author.guild_permissions.ban_members:
-      try:
-        target = message.mentions[0]
-      except:
-        await message.channel.send('유저가 지정되지 않았습니다')
-        return
-
-      j = message.content.split(" ")
-      try:
-        reason = j[2]
-      except IndexError:
-        reason = 'None'
-      embed = discord.Embed(title='블랙리스트', description=f'{target}님이 {message.guild.name} 블랙리스트에 추가되었습니다.\n사유: {reason}', colour=discord.Colour.red())
-      try:
-        await target.send(embed=embed)
-      except:
-        pass
-      embed = discord.Embed(title="블랙리스트 추가", color=0x000000)
-      embed.add_field(name="닉네임", value=str(target), inline=False)
-      embed.add_field(name="사유", value=str(reason), inline=False)
-      await client.get_channel(int(gtid)).send(embed=embed)
-      await target.ban(reason=reason)
 
 data = ['10새', '10새기', '10새리', '10세리', '10쉐이', '10쉑', '10스', '10쌔'
     , '10쌔기', '10쎄', '10알', '10창', '10탱', '18것', '18넘', '18년', '18노', '18놈', '18뇬', '18럼'
@@ -339,7 +28,7 @@ data = ['10새', '10새기', '10새리', '10세리', '10쉐이', '10쉑', '10스
     , '니아비', '니어매', '니어메', '니어미', '닝기리', '닝기미', '대가리', '뎡신', '도라이', '돈놈'
     , '돌아 이', '돌은놈', '되질래', '뒈져', '뒈져라', '뒈진', '뒈진다', '뒈질', '뒤질래', '등신', '디져라'
     , '디진다', '디질래', '딩시', '따식', '때놈', '또라이', '똘아이', '똘아이', '뙈놈', '뙤놈', '뙨넘'
-    , '뙨놈', '뚜쟁', '띠바', '띠발', '띠불', ' 띠팔', '메친넘', '메친놈', '미췬', '미췬', '미친', '미친넘', '미친년'
+    , '뙨놈', '뚜쟁', '띠바', '띠발', '띠불', ' 띠팔', '메친넘', '메친놈', '미췬', '미췬', '미친넘', '미친년'
     , '미친놈', '미친새끼', '미친스까이', '미틴', '미틴넘', '미틴년', '미틴놈', '바랄년', '병자', '뱅마', '뱅신', '벼엉신'
     , '병쉰', '병신', '부랄', '부럴', '불알', '불할', '붕가', '붙어먹', '뷰웅', '븅', '븅신', '빌어먹', '빙시', '빙신'
     , '빠가', '빠구리', '빠굴', '빠큐', '뻐큐', '뻑큐', '뽁큐', '상넘이', '상놈을', '상놈의', '상놈이', '새갸', '새꺄'
@@ -418,8 +107,312 @@ data = ['10새', '10새기', '10새리', '10세리', '10쉐이', '10쉑', '10스
     , 'williewanker', 'willy', 'wn', 'wog', 'wop', 'wtf', 'wuss', 'wuzzie', 'xtc', 'xxx', 'yankee', 'yellowman'
     , 'zigabo', 'zipperhead', 'douche', 'lmfao', 'lmao', "니애미", "음식물쓰레기 보다 못한", "지랄마", "ㅄ"]
 
-def messagecheck(message:str):
+def bool(message:str):
   for i in data:
     if i in message.lower():
-      return True
-  return False
+        return True
+    return False
+
+@bot.command()
+async def 안녕(ctx):
+    await ctx.send("안녕")
+
+@bot.command()
+async def 주사위(ctx):
+    result, _color, bot1, bot2, user1, user2, a, b = dice()
+
+    embed = discord.Embed(title = "주사위 게임 결과", description = None, color = _color)
+    embed.add_field(name = "Super Bot의 숫자 " + bot1 + "+" + bot2, value = ":game_die: " + a, inline = False)
+    embed.add_field(name = ctx.author.name+"의 숫자 " + user1 + "+" + user2, value = ":game_die: " + b, inline = False)
+    embed.set_footer(text="결과: " + result)
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def 도박(ctx, money):
+    userExistance, userRow = checkUser(ctx.author.name, ctx.author.id)
+    win = gamble()
+    result = ""
+    betting = 0
+    _color = 0x000000
+    if userExistance:
+        print("DB에서 ", ctx.author.name, "을 찾았습니다.")
+        cur_money = getMoney(ctx.author.name, userRow)
+
+        if money == "올인":
+            betting = cur_money
+            if win:
+                result = "성공"
+                _color = 0x00ff56
+                print(result)
+
+                modifyMoney(ctx.author.name, userRow, int(0.5*betting))
+
+            else:
+                result = "실패"
+                _color = 0xFF0000
+                print(result)
+
+                modifyMoney(ctx.author.name, userRow, -int(betting))
+                addLoss(ctx.author.name, userRow, int(betting))
+
+            embed = discord.Embed(title = "도박 결과", description = result, color = _color)
+            embed.add_field(name = "배팅금액", value = betting, inline = False)
+            embed.add_field(name = "현재 자산", value = getMoney(ctx.author.name, userRow), inline = False)
+
+            await ctx.send(embed=embed)
+            
+        elif int(money) >= 10:
+            if cur_money >= int(money):
+                betting = int(money)
+                print("배팅금액: ", betting)
+                print("")
+
+                if win:
+                    result = "성공"
+                    _color = 0x00ff56
+                    print(result)
+
+                    modifyMoney(ctx.author.name, userRow, int(0.5*betting))
+
+                else:
+                    result = "실패"
+                    _color = 0xFF0000
+                    print(result)
+
+                    modifyMoney(ctx.author.name, userRow, -int(betting))
+                    addLoss(ctx.author.name, userRow, int(betting))
+
+                embed = discord.Embed(title = "도박 결과", description = result, color = _color)
+                embed.add_field(name = "배팅금액", value = betting, inline = False)
+                embed.add_field(name = "현재 자산", value = getMoney(ctx.author.name, userRow), inline = False)
+
+                await ctx.send(embed=embed)
+
+            else:
+                print("돈이 부족합니다.")
+                print("배팅금액: ", money, " | 현재자산: ", cur_money)
+                await ctx.send("돈이 부족합니다. 현재자산: " + str(cur_money))
+        else:
+            print("배팅금액", money, "가 10보다 작습니다.")
+            await ctx.send("10원 이상만 배팅 가능합니다.")
+    else:
+        print("DB에서 ", ctx.author.name, "을 찾을 수 없습니다")
+        await ctx.send("도박은 회원가입 후 이용 가능합니다.")
+
+    print("------------------------------\n")
+
+@bot.command()
+async def 랭킹(ctx):
+    rank = ranking()
+    embed = discord.Embed(title = "레벨 랭킹", description = None, color = 0x4A44FF)
+
+    for i in range(0,len(rank)):
+        if i%2 == 0:
+            name = rank[i]
+            lvl = rank[i+1]
+            embed.add_field(name = str(int(i/2+1))+"위 "+name, value ="레벨: "+str(lvl), inline=False)
+
+    await ctx.send(embed=embed) 
+
+@bot.command()
+async def 회원가입(ctx):
+    print("회원가입이 가능한지 확인합니다.")
+    userExistance, userRow = checkUser(ctx.author.name, ctx.author.id)
+    if userExistance:
+        print("DB에서 ", ctx.author.name, "을 찾았습니다.")
+        print("------------------------------\n")
+        await ctx.send("이미 가입하셨습니다.")
+    else:
+        print("DB에서 ", ctx.author.name, "을 찾을 수 없습니다")
+        print("")
+
+        Signup(ctx.author.name, ctx.author.id)
+
+        print("회원가입이 완료되었습니다.")
+        print("------------------------------\n")
+        await ctx.send("회원가입이 완료되었습니다.")
+
+@bot.command()
+async def 탈퇴(ctx):
+    print("탈퇴가 가능한지 확인합니다.")
+    userExistance, userRow = checkUser(ctx.author.name, ctx.author.id)
+    if userExistance:
+        DeleteAccount(userRow)
+        print("탈퇴가 완료되었습니다.")
+        print("------------------------------\n")
+
+        await ctx.send("탈퇴가 완료되었습니다.")
+    else:
+        print("DB에서 ", ctx.author.name, "을 찾을 수 없습니다")
+        print("------------------------------\n")
+
+        await ctx.send("등록되지 않은 사용자입니다.")
+
+@bot.command()
+async def 내정보(ctx):
+    userExistance, userRow = checkUser(ctx.author.name, ctx.author.id)
+
+    if not userExistance:
+        print("DB에서 ", ctx.author.name, "을 찾을 수 없습니다")
+        print("------------------------------\n")
+        await ctx.send("회원가입 후 자신의 정보를 확인할 수 있습니다.")
+    else:
+        userExistance, userRow = checkUser(ctx.author.name, ctx.author.id)
+        level, exp, money, loss = userInfo(userRow)
+        rank = getRank(userRow)
+        data = datetime.datetime.utcfromtimestamp(((int(ctx.author.id) >> 22) + 1420070400000) / 1000)
+        userNum = checkUserNum()
+        expToUP = level * level + 6 * level
+        boxes = int(exp / expToUP * 20)
+        print("------------------------------\n")
+        embed = discord.Embed(title="!유저 정보", description=ctx.author.name, color=0x62D0F6)
+        embed = discord.Embed(color=0x00ff00)
+        embed.add_field(name="이름", value=ctx.author.name, inline=True)
+        embed.add_field(name="서버닉네임", value=ctx.author.display_name, inline=True)
+        embed.add_field(name="가입일", value=str(data.year) + "년" + str(data.month) + "월" + str(data.day) + "일",inline=True)
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.add_field(name="레벨", value=level)
+        embed.add_field(name="순위", value=str(rank) + "/" + str(userNum))
+        embed.add_field(name="XP: " + str(exp) + "/" + str(expToUP),value=boxes * ":blue_square:" + (20 - boxes) * ":white_large_square:", inline=False)
+        embed.add_field(name="보유 자산", value=money, inline=False)
+
+        await ctx.send(embed=embed)
+
+
+@bot.command()
+async def 정보(ctx, user: discord.User):
+  userExistance, userRow = checkUser(user.name, user.id)
+
+  if not userExistance:
+    print("DB에서 ", user.name, "을 찾을 수 없습니다")
+    print("------------------------------\n")
+    await ctx.send(user.name  + " 은(는) 등록되지 않은 사용자입니다.")
+  else:
+    level, exp, money, loss = userInfo(userRow)
+    rank = getRank(userRow)
+    userNum = chekcUserNum()
+    print("------------------------------\n")
+    embed = discord.Embed(title="유저 정보", description = user.name, color = 0x62D0F6)
+    embed.add_field(name = "레벨", value = level)
+    embed.add_field(name = "경험치", value = str(exp) + "/" + str(level*level + 6*level))
+    embed.add_field(name = "순위", value = str(rank) + "/" + str(userNum))
+    embed.add_field(name = "보유 자산", value = money, inline = False)
+    embed.add_field(name = "도박으로 날린 돈", value = loss, inline = False)
+
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def 송금(ctx, user: discord.User, money):
+    print("송금이 가능한지 확인합니다.")
+    senderExistance, senderRow = checkUser(ctx.author.name, ctx.author.id)
+    receiverExistance, receiverRow = checkUser(user.name, user.id)
+
+    if not senderExistance:
+        print("DB에서", ctx.author.name, "을 찾을수 없습니다")
+        print("------------------------------\n")
+        await ctx.send("회원가입 후 송금이 가능합니다.")
+    elif not receiverExistance:
+        print("DB에서 ", user.name, "을 찾을 수 없습니다")
+        print("------------------------------\n")
+        await ctx.send(user.name  + " 은(는) 등록되지 않은 사용자입니다.")
+    else:
+        print("송금하려는 돈: ", money)
+
+        s_money = getMoney(ctx.author.name, senderRow)
+        r_money = getMoney(user.name, receiverRow)
+
+        if s_money >= int(money) and int(money) != 0:
+            print("돈이 충분하므로 송금을 진행합니다.")
+            print("")
+
+            remit(ctx.author.name, senderRow, user.name, receiverRow, money)
+
+            print("송금이 완료되었습니다. 결과를 전송합니다.")
+
+            embed = discord.Embed(title="송금 완료", description = "송금된 돈: " + money, color = 0x77ff00)
+            embed.add_field(name = "보낸 사람: " + ctx.author.name, value = "현재 자산: " + str(getMoney(ctx.author.name, senderRow)))
+            embed.add_field(name = "→", value = ":moneybag:")
+            embed.add_field(name="받은 사람: " + user.name, value="현재 자산: " + str(getMoney(user.name, receiverRow)))
+                    
+            await ctx.send(embed=embed)
+        elif int(money) == 0:
+            await ctx.send("0원을 보낼 필요는 없죠")
+        else:
+            print("돈이 충분하지 않습니다.")
+            print("송금하려는 돈: ", money)
+            print("현재 자산: ", s_money)
+            await ctx.send("돈이 충분하지 않습니다. 현재 자산: " + str(s_money))
+
+        print("------------------------------\n")
+
+
+@bot.command()
+async def reset(ctx):
+    resetData()
+
+@bot.command()
+async def add(ctx, money):
+    user, row = checkUser(ctx.author.name, ctx.author.id)
+    addMoney(row, int(money))
+    print("money")
+
+@bot.command()
+async def exp(ctx, exp):
+    user, row = checkUser(ctx.author.name, ctx.author.id)
+    addExp(row, int(exp))
+    print("exp")
+
+@bot.command()
+async def lvl(ctx, lvl):
+    user, row = checkUser(ctx.author.name, ctx.author.id)
+    adjustlvl(row, int(lvl))
+    print("lvl")
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    if message.content == "!reset":
+        await bot.process_commands(message)
+        return
+    else:
+        userExistance, userRow = checkUser(message.author.name, message.author.id)
+        channel = message.channel
+        if userExistance:
+            levelUp, lvl = levelupCheck(userRow)
+            if levelUp:
+                print(message.author, "가 레벨업 했습니다")
+                print("")
+                embed = discord.Embed(title = "레벨업", description = None, color = 0x00A260)
+                embed.set_footer(text = message.author.name + "이 " + str(lvl) + "레벨 달성!")
+                await channel.send(embed=embed)
+            else:
+                modifyExp(userRow, 1)
+                print("------------------------------\n")
+
+        await bot.process_commands(message)
+    
+    if message.content.startswith("!도움말"):
+        embed = discord.Embed(title="Code Bot", description="개발중", color=0x6E17E3)
+        embed.add_field(name="─────────기능─────────", value="ㅤ", inline=False)
+        embed.add_field(name=bot.command_prefix + "도움말", value="도움말을 봅니다", inline=False)
+        embed.add_field(name="─────────놀이─────────", value="ㅤ", inline=False)
+        embed.add_field(name=bot.command_prefix + "주사위", value="주사위를 굴려 봇과 대결합니다", inline=False)
+        embed.add_field(name=bot.command_prefix + "도박 [돈]", value="(오류)도박 게임입니다", inline=False)
+        embed.add_field(name="─────────정보─────────", value="ㅤ", inline=False)
+        embed.add_field(name=bot.command_prefix + "내정보", value="자신의 정보를 확인합니다", inline=False)
+        embed.add_field(name=bot.command_prefix + "정보 [대상]", value="멘션한 [대상]의 정보를 확인합니다", inline=False)
+        embed.add_field(name=bot.command_prefix + "송금 [대상] [돈]", value="멘션한 [대상]에게 [돈]을 보냅니다", inline=False)
+        embed.add_field(name=bot.command_prefix + "랭킹", value="랭킹을 봅니다", inline=False)
+        embed.add_field(name="─────────관리자 권한─────────", value="ㅤ", inline=False)
+        embed.add_field(name="─────────테스트─────────", value="ㅤ", inline=False)
+        await message.channel.send(embed=embed)
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("명령어를 찾지 못했습니다. !도움을 입력하여 명령어를 확인하세요.")
+
+access_token = os.environ["BOT_TOKEN"]
+bot.run(access_token)
