@@ -1,0 +1,22 @@
+    if message.content.startswith("") and message.author.id != 860821426915508274:
+      file = openpyxl.load_workbook("레벨.xlsx")
+      sheet = flie.active
+      exp = [10, 20, 30, 40, 50]
+      i = 1
+      while True:
+        if sheet["A" + st(i)].value == str(message.author.id):
+          sheet["B" + st(i)].value = sheet["B" + str(i)].value + 5
+          if sheet["B" + st(i)].value >= exp[sheet["C" + str(i)].value - 1]:
+            sheet["C" + st(i)].value == sheet["C" + str(i)].value + 1
+            await message.channel.send("레벨이 올랐습니다.\n현재 레벨 : " + str(sheet["C" + str(i)].value) + "\n경험치 : " + str(sheet["B" + str(i)].value))
+          flie.save("레벨.xlsx")
+          break
+        
+        if sheet["A" + st(i)].value == None:
+          sheet["A" + st(i)].value = str(message.author.id)
+          sheet["B" + st(i)].value = 0
+          sheet["C" + st(i)].value = 1
+          flie.save("레벨.xlsx")
+          break
+
+        i += 1

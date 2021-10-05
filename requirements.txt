@@ -1,0 +1,13 @@
+asyncio
+discord
+discord.py
+python
+pypresence
+ranking
+keep-alive
+Flask
+openpyxl
+youtube_dl
+rank
+pytz
+workbook
